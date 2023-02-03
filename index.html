@@ -1,12 +1,28 @@
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <meta name="Le nom de ma page !">
+    <meta name="description" content="Ceci est ma première page !">
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 </head>
-<body>
-    <p>Hello World!</p>
-    <h1>This is a test</h1>
-</body>
+    <body>
+        <h1>
+            Calculatrice
+        </h1>
+        <form id="testform">
+            <label for="Nombre1">Nombre 1</label>
+            <input type="number" id="Nombre1">
+            <label for="Nombre2">Nombre 2</label>
+            <input type="float" id="Nombre2">
+            <input type="button" value="Aditionner" onclick="test1(this.form)">
+        </form>
+    
+        <h3>Résultat : <span id="response"></span></h3>
+    
+    </body>
 </html>
