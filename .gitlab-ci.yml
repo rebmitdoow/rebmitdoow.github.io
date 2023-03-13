@@ -1,0 +1,60 @@
+# Select docker image from https://hub.docker.com/_/php/
+image: php:7.3
+
+# Select what we should cache
+cache:
+  paths:
+    - vendor/
+
+before_script:
+  # Install git, the docker php image doesn't have it installed by default
+  - apt-get update -yqq
+  - apt-get install git -yqq
+  - apt-get install zip -yqq
+  # Enable necessary php extensions
+  - docker-php-ext-enable curl && docker-php-ext-enable json && docker-php-ext-enable zip && docker-php-ext-enable mbstring && docker-php-ext-enable gd && docker-php-ext-enable pdo_mysql
+  # Install composer
+  - curl -sS https://getcomposer.org/installer | php
+  # Create composer.json file manually, since this is a project without any non-dev dependencies yet
+  - php composer.phar require --dev php-parallel-lint/php-parallel-lint
+  - php composer.phar require --dev friendsofphp/php-cs-fixer
+  # Install all project dependencies
+  - php composer.phar install
+
+# Run tests
+test_app_phpdefaultversion:
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+
+job_lint_app_phpnextversion:
+  image: php:7.4
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+  allow_failure: true
+
+# Run same tests with older supported versions
+test_app_php72:
+  image: php:7.2
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+
+test_app_php71:
+  image: php:7.1
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+
+test_app_php70:
+  image: php:7.0
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
+
+test_app_php56:
+  image: php:5.6
+  script:
+    - ./vendor/bin/parallel-lint --exclude vendor .
+    - ./vendor/bin/php-cs-fixer -vvv fix . --dry-run --diff --using-cache=no --rules=@PSR2
